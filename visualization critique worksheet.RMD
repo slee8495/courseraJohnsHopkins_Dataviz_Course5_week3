@@ -1,0 +1,34 @@
+---
+title: "Visualization Critique"
+author: "SLee"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Visualization Link
+
+Please provide a link to your visualization critique.
+
+<https://www.reddit.com/r/dataisbeautiful/comments/udux0e/oc_animation_showing_shipments_of_russian_fossil/>
+
+## Weakness
+
+-   It is difficult to compare the different figures and to assess which flows contributed the most to the cumulative values.
+
+-   The date on the top right is not too readable
+
+## Strength
+
+-   Fascinating animation catches reader's eyes
+
+-   Clear Title to explain what this chart is about
+
+-   Great labeling to the plots
+
+-   The animation enabled to show in one figure the flow by the time

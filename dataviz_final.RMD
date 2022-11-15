@@ -1,0 +1,148 @@
+---
+title: "my_final_project"
+output: 
+  flexdashboard::flex_dashboard:
+  orientation: rows
+vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+
+#####Make sure you load any required packages.
+
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit
+library(tidyverse)
+library(magrittr)
+library(openxlsx)
+library(readxl)
+library(writexl)
+library(reshape2)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(ggthemes)
+library(plotly)
+
+
+```
+
+```{r, include=FALSE} 
+
+nobel <- read.csv("C:/Users/sanle/OneDrive/R/Studies/My Study/Coursera/Johns Hopkins Data Visualization/Course 5/courseraJohnsHopkins_Dataviz_Course5_week3/courseraJohnsHopkins_Dataviz_Course5_week3/nobel_final.csv")
+
+nobel %>% 
+  tibble::as.tibble() -> nobel
+
+nobel
+```
+
+# Data Table
+
+## Column {data-width="1000"}
+
+```{r}
+
+DT::datatable(nobel, 
+              extensions = "Buttons",
+              options = list(pageLength = 100, 
+                             scrollY= TRUE,
+                             dom = "Blfrtip",
+                             buttons = c("copy", "csv", "excel", "pdf")))
+
+
+```
+
+# Page 1
+
+### Chart A *1. Histogram: distributions of winners by age.*
+
+
+
+```{r data_1, echo = FALSE}
+nobel %>% 
+  dplyr::select(age_get_prize) -> number_1_data
+
+
+####make sure you call the data so it will display in your report
+
+number_1_data %>% 
+  ggplot2::ggplot(mapping = aes(x = age_get_prize)) +
+  ggplot2::geom_histogram(fill = "lightblue") +
+  ggplot2::theme_minimal() +
+  ggplot2::labs(title = "Histogram: distributions of winners by age",
+                x = "Age get Prize",
+                y = NULL) -> number_1_fig
+
+number_1_fig
+
+```
+
+Page 2
+======
+  
+### Chart B *2. Bar charts: winners by Top 10 university*
+
+
+```{r data_2, echo = FALSE}
+nobel %>% 
+  dplyr::select(name_of_university) %>% 
+  dplyr::count(name_of_university) %>% 
+  dplyr::arrange(desc(n)) %>% 
+  dplyr::slice_head(n = 10) -> number_2_data
+
+
+####make sure you call the data so it will display in your report
+
+number_2_data %>% 
+  dplyr::slice(n = -1) %>% 
+  ggplot2::ggplot(mapping = aes(y = reorder(name_of_university, n), x = n)) +
+  ggplot2::geom_bar(stat = "identity",
+                    mapping = aes(fill = name_of_university),
+                    show.legend = FALSE) +
+  ggplot2::theme_minimal() +
+  ggplot2::labs(title = "Bar charts: winners by Top 10 university",
+                x = "Number of Nobel Prize", 
+                y = "Name of University") +
+  ggplot2::geom_text(mapping = aes(label = n), hjust = "outward") -> number_2_fig
+
+
+number_2_fig
+
+
+
+```
+
+Page 3
+======
+
+### Chart C  *3. Pie plot: average age of winners by category.*
+
+
+```{r data_3, echo = FALSE}
+nobel %>% 
+  dplyr::select(gender, age, category) %>% 
+  dplyr::group_by(category) %>% 
+  dplyr::summarise(mean = mean(age)) %>% 
+  dplyr::mutate(mean = round(mean, 0)) %>% 
+  dplyr::arrange(desc(mean)) -> number_3_data
+
+
+number_3_data %>% 
+  ggplot2::ggplot(mapping = aes(x = desc(reorder(category, mean)), y = mean, fill = category)) +
+  ggplot2::geom_bar(stat = "identity") +
+  ggplot2::coord_polar() +
+  ggplot2::geom_text(mapping = aes(label = paste0(category, " - ", mean))) +
+  ggplot2::scale_y_continuous(labels = scales::number) +
+  ggplot2::theme_void() +
+  ggplot2::theme(legend.position = "none")+
+  ggplot2::labs(title = "Average age of Winners by Category") -> number_3_fig
+
+
+number_3_fig
+
+```
+
+
+
