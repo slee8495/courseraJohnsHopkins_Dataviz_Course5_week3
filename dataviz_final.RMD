@@ -1,10 +1,13 @@
 ---
 title: "my_final_project"
+runtime: shiny
 output: 
   flexdashboard::flex_dashboard:
   orientation: rows
-vertical_layout: fill
-runtime: shiny
+  vertical_layout: fill
+  source_code: embed
+  theme: cosmo
+
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +15,7 @@ runtime: shiny
 #####Make sure you load any required packages.
 
 knitr::opts_chunk$set(echo = TRUE)
-knitr::knit
+
 library(tidyverse)
 library(magrittr)
 library(openxlsx)
@@ -24,18 +27,17 @@ library(janitor)
 library(lubridate)
 library(ggthemes)
 library(plotly)
+library(DT)
+library(rsconnect)
+library(timetk)
 
 
 ```
 
 ```{r, include=FALSE} 
 
-nobel <- read.csv("C:/Users/sanle/OneDrive/R/Studies/My Study/Coursera/Johns Hopkins Data Visualization/Course 5/courseraJohnsHopkins_Dataviz_Course5_week3/courseraJohnsHopkins_Dataviz_Course5_week3/nobel_final.csv")
+readRDS("nobel.rds") -> nobel
 
-nobel %>% 
-  tibble::as.tibble() -> nobel
-
-nobel
 ```
 
 # Data Table
@@ -145,4 +147,28 @@ number_3_fig
 ```
 
 
+Page 4
+======
 
+### Chart D  *4. Line Plot: Number of Nobel Prize received by Gende*
+
+
+```{r data_4, echo = FALSE}
+nobel %>% 
+  dplyr::select(gender, year) %>% 
+  dplyr::group_by(gender, year) %>% 
+  dplyr::count() %>% 
+  dplyr::ungroup()-> number_4_data
+  
+number_4_data %>% 
+  ggplot2::ggplot(mapping = aes(x = year, y = n, group = gender)) +
+  ggplot2::geom_line(mapping = aes(color = gender)) +
+  ggplot2::labs(title = "Number of Nobel Prize received by Gender",
+                y = "Number of Nobel Prize",
+                x = "Year") +
+  ggplot2::theme_classic() -> number_4_fig
+
+
+number_4_fig
+
+```
