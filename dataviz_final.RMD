@@ -30,6 +30,7 @@ library(plotly)
 library(DT)
 library(rsconnect)
 library(timetk)
+library(wordcloud2)
 
 
 ```
@@ -172,3 +173,37 @@ number_4_data %>%
 number_4_fig
 
 ```
+
+
+Page 5
+======
+
+### Chart E  *5. Bar Plot: Frequency by country of University*
+
+
+```{r data_5, echo = FALSE}
+nobel %>% 
+  dplyr::group_by(country_of_university) %>% 
+  dplyr::count() %>% 
+  dplyr::filter(country_of_university != "") %>% 
+  dplyr::arrange(desc(n))-> number_5_data
+
+
+number_5_data %>% 
+  ggplot2::ggplot(mapping = aes(x = n, y = reorder(country_of_university, n))) +
+  ggplot2::geom_bar(stat = "identity", fill = "lightblue") +
+  ggplot2::geom_text(mapping = aes(label = n), hjust = "inward", color = "tomato1") +
+  ggplot2::labs(title = "Bar Plot: Frequency by country of University",
+                x = NULL,
+                y = NULL) +
+  ggplot2::theme_minimal() -> number_5_fig
+
+number_5_fig
+
+
+```
+
+
+
+
+
