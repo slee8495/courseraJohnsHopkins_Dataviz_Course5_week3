@@ -31,6 +31,7 @@ library(DT)
 library(rsconnect)
 library(timetk)
 library(wordcloud2)
+library(ggside)
 
 
 ```
@@ -191,7 +192,7 @@ nobel %>%
 
 number_5_data %>% 
   ggplot2::ggplot(mapping = aes(x = n, y = reorder(country_of_university, n))) +
-  ggplot2::geom_bar(stat = "identity", fill = "lightblue") +
+  ggplot2::geom_bar(stat = "identity", fill = "lightgreen") +
   ggplot2::geom_text(mapping = aes(label = n), hjust = "inward", color = "tomato1") +
   ggplot2::labs(title = "Bar Plot: Frequency by country of University",
                 x = NULL,
@@ -204,6 +205,27 @@ number_5_fig
 ```
 
 
+Page 6
+======
+
+### Chart F  *6. *
+
+
+```{r data_6, echo = FALSE}
+
+number_3_data %>% 
+  ggplot2::ggplot(mapping = aes(x = desc(reorder(category, mean)), y = mean, fill = category)) +
+  ggplot2::geom_bar(stat = "identity") +
+  ggplot2::coord_polar() +
+  ggplot2::geom_text(mapping = aes(label = paste0(category, " - ", mean))) +
+  ggplot2::scale_y_continuous(labels = scales::number) +
+  ggplot2::theme_void() +
+  ggplot2::theme(legend.position = "none")+
+  ggplot2::labs(title = "Average age of Winners by Category")  +
+  ggside::geom_ysidefreqpoly()
+  
+
+```
 
 
 
