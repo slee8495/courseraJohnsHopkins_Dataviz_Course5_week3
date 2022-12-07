@@ -270,7 +270,7 @@ treemap::treemap(number_7_data,
 Page 8
 ======
 
-### Chart G  *8. *
+### Chart G  *8. 3 ways Plot*
 
 ```{r data_8, echo = FALSE}
 nobel %>% 
@@ -278,6 +278,13 @@ nobel %>%
   ggplot2::geom_point(mapping = aes(color = gender),
                       size = 2,
                       alpha = 0.5) +
+  ggplot2::annotate("rect", xmin = 2012, xmax = 2020, ymin = 20, ymax = 30, alpha = 0.2, fill = "red") +
+  ggplot2::annotate(geom = "curve", x = 2000, xend = 2005, y = 15, yend = 20, size = 1.5,
+                    curvature = 0.2, arrow = arrow(length = unit(4, "mm"))) +
+  ggplot2::annotate(geom = "text", x = 1995, y = 25, label = "First 20's Nobel Prize", color = "red") +
+  ggplot2::annotate(geom = "curve", x = 1975, xend = 2020, y = 90, yend = 70, size = 1.5, color = "red",
+                    curvature = 0, arrow = arrow(length = unit(4, "mm"))) +
+  ggplot2::annotate(geom = "text", x = 2000, y = 79, label = "Getting Younger", size = 5, color = "yellow") +
   ggplot2::geom_rug(position = "jitter", size = 0.2, alpha = 0.3) +
   ggside::geom_xsidedensity(mapping = aes(y = ggplot2::after_stat(density), fill = category),
                             alpha = 0.5,
