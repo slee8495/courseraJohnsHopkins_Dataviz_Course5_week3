@@ -387,7 +387,7 @@ number_9_data %>%
                  axis.text.x = element_text(color = "gray12"),
                  legend.position = "bottom") +
   ggplot2::labs(title = "This visualization shows the category's awarded portion") +
-  ggplot2::theme(panel.background = element_rect(fill = "white", color = "white"))
+  ggplot2::theme(panel.background = element_rect(fill = "white", color = "white")) -> number_9_fig
   
 
 number_9_fig
