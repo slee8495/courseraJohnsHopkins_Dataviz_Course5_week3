@@ -1,5 +1,5 @@
 ---
-title: "my_final_project"
+title: "Johns Hopkins University - Data Viz Certification Final Project"
 runtime: shiny
 output:
   flexdashboard::flex_dashboard: null
@@ -37,6 +37,7 @@ library(ggthemes)
 library(ggforce)
 library(gganimate)
 library(treemap)
+library(shiny)
 library(tidyquant)
 
 ```
@@ -79,7 +80,7 @@ nobel %>%
 number_1_data %>% 
   ggplot2::ggplot(mapping = aes(x = age_get_prize)) +
   ggplot2::geom_histogram(fill = "lightblue") +
-  ggplot2::theme_minimal() +
+  ggplot2::theme_classic() +
   ggplot2::labs(title = "Histogram: distributions of winners by age",
                 x = "Age get Prize",
                 y = NULL) -> number_1_fig
@@ -110,7 +111,7 @@ number_2_data %>%
   ggplot2::geom_bar(stat = "identity",
                     mapping = aes(fill = name_of_university),
                     show.legend = FALSE) +
-  ggplot2::theme_minimal() +
+  ggthemes::theme_tufte() +
   ggplot2::labs(title = "Bar charts: winners by Top 10 university",
                 x = "Number of Nobel Prize", 
                 y = "Name of University") +
@@ -165,15 +166,18 @@ nobel %>%
   dplyr::select(gender, year) %>% 
   dplyr::group_by(gender, year) %>% 
   dplyr::count() %>% 
-  dplyr::ungroup()-> number_4_data
+  dplyr::ungroup() %>% 
+  dplyr::rename(Gender = gender)-> number_4_data
   
 number_4_data %>% 
-  ggplot2::ggplot(mapping = aes(x = year, y = n, group = gender)) +
-  ggplot2::geom_line(mapping = aes(color = gender)) +
+  ggplot2::ggplot(mapping = aes(x = year, y = n, group = Gender)) +
+  ggplot2::geom_line(mapping = aes(color = Gender)) +
   ggplot2::labs(title = "Number of Nobel Prize received by Gender",
                 y = "Number of Nobel Prize",
                 x = "Year") +
-  ggplot2::theme_classic() -> number_4_fig
+  ggplot2::theme_classic() +
+  ggplot2::scale_color_discrete(breaks = c("male", "female"),
+                                labels = c("Male", "Female")) -> number_4_fig
 
 
 
@@ -185,7 +189,7 @@ number_4_fig
 Page 5
 ======
 
-### Chart E  *5. Bar Plot: Frequency by country of University*
+### Chart E  *5. Bar Plot: by Countries that produced the Nobel Prize Winner the most*
 
 
 ```{r data_5, echo = FALSE}
@@ -200,10 +204,12 @@ number_5_data %>%
   ggplot2::ggplot(mapping = aes(x = n, y = reorder(country_of_university, n))) +
   ggplot2::geom_bar(stat = "identity", fill = "lightgreen") +
   ggplot2::geom_text(mapping = aes(label = n), hjust = "inward", color = "tomato1") +
-  ggplot2::labs(title = "Bar Plot: Frequency by country of University",
+  ggplot2::labs(title = "Bar Plot: by Countries that produced the Nobel Prize Winner the most",
                 x = NULL,
                 y = NULL) +
-  ggthemes::theme_tufte() -> number_5_fig
+  ggthemes::theme_tufte() +
+  ggplot2::theme(axis.ticks.x = element_blank(),
+                 axis.text.x = element_blank())-> number_5_fig
 
 number_5_fig
 
@@ -308,3 +314,82 @@ number_8_fig
 
 ```
 
+
+Page 9
+======
+
+### Chart G  *9. Radar Chart*
+
+```{r data_9, echo = FALSE}
+nobel %>% 
+  dplyr::group_by(category) %>% 
+  dplyr::count()  -> number_9_data
+
+
+number_9_data %>% 
+  ggplot2::ggplot() +
+  ggplot2::geom_hline(mapping = aes(yintercept = y),
+                      data.frame(y = c(0:6) * 50),
+                      color = "lightgrey") +
+  ggplot2::geom_col(mapping = aes(x = reorder(str_wrap(category, 6), n),
+                                  y = n,
+                                  fill = n),
+                    position = "dodge2",
+                    show.legend = TRUE,
+                    alpha = 0.9) +
+  ggplot2::geom_point(mapping = aes(x = reorder(str_wrap(category, 6), n),
+                                    y = n),
+                      size = 3,
+                      color = "gray12") +
+  ggplot2::geom_segment(mapping = aes(x = reorder(str_wrap(category, 6), n),
+                                      y = 0,
+                                      xend = reorder(str_wrap(category, 6), n),
+                                      yend = 250),
+                        linetype = "dashed",
+                        color = "gray12") +
+  ggplot2::coord_polar() +
+  ggplot2::annotate(x = 6,
+                    y = 100,
+                    label = "Total number of awarded",
+                    geom = "text",
+                    angle = -34,
+                    size = 3.25,
+                    vjust = 1) +
+  ggplot2::annotate(x = 7,
+                    y = 51,
+                    label = "50",
+                    geom = "text") +
+  ggplot2::annotate(x = 7,
+                    y = 101,
+                    label = "100",
+                    geom = "text") +
+  ggplot2::annotate(x = 7,
+                    y = 151,
+                    label = "150",
+                    geom = "text") +
+  ggplot2::annotate(x = 7,
+                    y = 201,
+                    label = "200",
+                    geom = "text") +
+  ggplot2::annotate(x = 7,
+                    y = 251,
+                    label = "250",
+                    geom = "text") +
+  ggplot2::scale_y_continuous(limits = c(-100, 300),
+                              expand = c(0, 0),
+                              breaks = c(0, 50, 100, 150, 200, 250)) +
+  ggplot2::scale_fill_gradientn("Number of Awarded",
+                                colors = c("#6C5B7B","#C06C84","#F67280","#F8B195")) +
+  ggplot2::guides(fill = guide_colorsteps(barwidth = 15, barheight = 0.5, title.position = "top", title.hjust = 0.5)) +
+  ggplot2::theme(axis.title = element_blank(),
+                 axis.ticks = element_blank(),
+                 axis.text.y = element_blank(),
+                 axis.text.x = element_text(color = "gray12"),
+                 legend.position = "bottom") +
+  ggplot2::labs(title = "This visualization shows the category's awarded portion") +
+  ggplot2::theme(panel.background = element_rect(fill = "white", color = "white"))
+  
+
+number_9_fig
+
+```
