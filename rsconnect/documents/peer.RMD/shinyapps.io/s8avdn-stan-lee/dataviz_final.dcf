@@ -1,0 +1,14 @@
+name: dataviz_final
+title: dataviz_final
+username:
+account: s8avdn-stan-lee
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7635707
+bundleId: 6517015
+url: https://s8avdn-stan-lee.shinyapps.io/dataviz_final/
+when: 1668533306.32061
+lastSyncTime: 1668533306.32061
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: nobel_final.csv

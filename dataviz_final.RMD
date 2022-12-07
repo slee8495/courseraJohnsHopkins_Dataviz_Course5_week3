@@ -1,13 +1,14 @@
 ---
 title: "my_final_project"
 runtime: shiny
-output: 
-  flexdashboard::flex_dashboard:
+output:
+  flexdashboard::flex_dashboard: null
   orientation: rows
   vertical_layout: fill
   source_code: embed
   theme: cosmo
-
+resource_files:
+- nobel.rds
 ---
 
 ```{r setup, include=FALSE}
@@ -32,7 +33,11 @@ library(rsconnect)
 library(timetk)
 library(wordcloud2)
 library(ggside)
-
+library(ggthemes)
+library(ggforce)
+library(gganimate)
+library(treemap)
+library(tidyquant)
 
 ```
 
@@ -171,6 +176,7 @@ number_4_data %>%
   ggplot2::theme_classic() -> number_4_fig
 
 
+
 number_4_fig
 
 ```
@@ -208,24 +214,89 @@ number_5_fig
 Page 6
 ======
 
-### Chart F  *6. *
+### Chart F  *6. Correlation between year and age*
 
 
 ```{r data_6, echo = FALSE}
 
-number_3_data %>% 
-  ggplot2::ggplot(mapping = aes(x = desc(reorder(category, mean)), y = mean, fill = category)) +
-  ggplot2::geom_bar(stat = "identity") +
-  ggplot2::coord_polar() +
-  ggplot2::geom_text(mapping = aes(label = paste0(category, " - ", mean))) +
-  ggplot2::scale_y_continuous(labels = scales::number) +
-  ggplot2::theme_void() +
-  ggplot2::theme(legend.position = "none")+
-  ggplot2::labs(title = "Average age of Winners by Category")  +
-  ggside::geom_ysidefreqpoly()
+nobel %>% 
+  ggplot2::ggplot(mapping = aes(x = year, y = age)) +
+  ggplot2::geom_point(size = 5, alpha = 0.2, color = "blue") +
+  ggthemes::theme_stata() +
+  ggplot2::labs(title = "Correlation between the Year and Age",
+                subtitle = "Density of points shows the age trend of Nobel Prize",
+                x = "Year", 
+                y = "Age") +
+  # ggforce::geom_mark_ellipse(mapping = aes(group = year), 
+  #                            linetype = "dashed",
+  #                            alpha = 0.2,
+  #                            color = "grey50") +
   
+  ggplot2::annotate("rect", xmin = 2012, xmax = 2020, ymin = 20, ymax = 30, alpha = 0.2, fill = "red") +
+  ggplot2::annotate(geom = "curve", x = 2000, xend = 2005, y = 15, yend = 20, size = 1.5,
+                    curvature = 0.2, arrow = arrow(length = unit(4, "mm"))) +
+  ggplot2::annotate(geom = "text", x = 1995, y = 25, label = "First 20's Nobel Prize", color = "red") +
+  ggplot2::annotate(geom = "curve", x = 1975, xend = 2020, y = 90, yend = 70, size = 1.5, color = "red",
+                    curvature = 0, arrow = arrow(length = unit(4, "mm"))) +
+  ggplot2::annotate(geom = "text", x = 2000, y = 79, label = "Getting Younger", size = 5, color = "yellow") -> number_6_fig
+
+number_6_fig
 
 ```
 
+Page 7
+======
 
+### Chart G  *7. Tree Map by countries that produced the most Nobel Prize Winner*
+
+```{r data_7, echo = FALSE}
+nobel %>% 
+  dplyr::group_by(country_of_university) %>% 
+  dplyr::count() %>%
+  dplyr::arrange(desc(n)) %>%
+  data.frame() %>% 
+  dplyr::slice(n = -2) %>% 
+  dplyr::slice_head(n = 50) %>% 
+  dplyr::rename("Tree Map by countries that produced the most Nobel Prize Winner" = n) -> number_7_data
+
+treemap::treemap(number_7_data,
+                 index = "country_of_university",
+                 vSize = "Tree Map by countries that produced the most Nobel Prize Winner",
+                 type = "index") 
+
+```
+
+Page 8
+======
+
+### Chart G  *8. *
+
+```{r data_8, echo = FALSE}
+nobel %>% 
+  ggplot2::ggplot(mapping = aes(x = year, y = age)) +
+  ggplot2::geom_point(mapping = aes(color = gender),
+                      size = 2,
+                      alpha = 0.5) +
+
+  ggside::geom_xsidedensity(mapping = aes(y = ggplot2::after_stat(density), fill = category),
+                            alpha = 0.5,
+                            position = "stack") +
+  ggside::geom_ysidefreqpoly(color = "red") +
+  ggside::geom_ysidehistogram(fill = "blue",
+                              alpha = 0.5) +
+  tidyquant::scale_color_tq() +
+  tidyquant::scale_fill_tq() +
+    tidyquant::theme_tq() +
+  ggplot2::theme(ggside.panel.scale.x = 0.4,
+                 ggside.panel.scale.y = 0.4) +
+  ggplot2::scale_color_manual(values = c("red","blue")) +
+  ggplot2::labs(title = "Main Plot: Correlation between the Year and Age\n
+  X - Side Plot: Density Plot by Category\n
+  Y - Side Plot: Histogram by Age of Nobel Winners",
+                x = "Year",
+                y = "Age") -> number_8_fig
+
+number_8_fig
+
+```
 
