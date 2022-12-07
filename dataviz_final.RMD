@@ -114,8 +114,8 @@ number_2_data %>%
   ggplot2::labs(title = "Bar charts: winners by Top 10 university",
                 x = "Number of Nobel Prize", 
                 y = "Name of University") +
-  ggplot2::geom_text(mapping = aes(label = n), hjust = "outward") -> number_2_fig
-
+  ggplot2::geom_text(mapping = aes(label = n), hjust = "inward") +
+  ggplot2::theme(plot.title = element_text(size = 13)) -> number_2_fig
 
 number_2_fig
 
@@ -203,7 +203,7 @@ number_5_data %>%
   ggplot2::labs(title = "Bar Plot: Frequency by country of University",
                 x = NULL,
                 y = NULL) +
-  ggplot2::theme_minimal() -> number_5_fig
+  ggthemes::theme_tufte() -> number_5_fig
 
 number_5_fig
 
@@ -238,7 +238,8 @@ nobel %>%
   ggplot2::annotate(geom = "text", x = 1995, y = 25, label = "First 20's Nobel Prize", color = "red") +
   ggplot2::annotate(geom = "curve", x = 1975, xend = 2020, y = 90, yend = 70, size = 1.5, color = "red",
                     curvature = 0, arrow = arrow(length = unit(4, "mm"))) +
-  ggplot2::annotate(geom = "text", x = 2000, y = 79, label = "Getting Younger", size = 5, color = "yellow") -> number_6_fig
+  ggplot2::annotate(geom = "text", x = 2000, y = 79, label = "Getting Younger", size = 5, color = "yellow") +
+  ggplot2::geom_rug(position = "jitter", size = 0.2, alpha = 0.3) -> number_6_fig
 
 number_6_fig
 
@@ -277,7 +278,7 @@ nobel %>%
   ggplot2::geom_point(mapping = aes(color = gender),
                       size = 2,
                       alpha = 0.5) +
-
+  ggplot2::geom_rug(position = "jitter", size = 0.2, alpha = 0.3) +
   ggside::geom_xsidedensity(mapping = aes(y = ggplot2::after_stat(density), fill = category),
                             alpha = 0.5,
                             position = "stack") +
@@ -290,11 +291,11 @@ nobel %>%
   ggplot2::theme(ggside.panel.scale.x = 0.4,
                  ggside.panel.scale.y = 0.4) +
   ggplot2::scale_color_manual(values = c("red","blue")) +
-  ggplot2::labs(title = "Main Plot: Correlation between the Year and Age\n
-  X - Side Plot: Density Plot by Category\n
-  Y - Side Plot: Histogram by Age of Nobel Winners",
+  ggplot2::labs(title = "Main Plot: Correlation between the Year and Age",
+                subtitle = "X - Side Plot: Density Plot by Category\nY - Side Plot: Histogram by Age of Nobel Winners",
                 x = "Year",
-                y = "Age") -> number_8_fig
+                y = "Age") +
+  ggplot2::theme(plot.title = element_text(size = 12)) -> number_8_fig
 
 number_8_fig
 
